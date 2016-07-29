@@ -1,0 +1,35 @@
+import RPI.GPIO as GPIO					#import GPIO functionality
+from gpiozero import MotionSensor				#import MotionSensor functionality
+from gpiozero import LED					#import LED functionality
+
+PIR_PIN = 7						#Motion sensor called from pin 7 on Pi
+GPIO.setmode(GPIO.BCM)					#Broadcom SOC Channel - refers to outer layout of pins in diagram
+GPIO.setwarnings(False)					#turns off external GPIO warnings
+
+led_green = LED(10)						#assigns green LED light to GPIO 10
+led_red = LED(17)						#assigns red LED light to GPIO 17
+
+pir = MotionSensor(4)					#assigns Motion sensor to GPIO to GPIO 4 (pin 7)
+print "PIR Motion Demo (CTRL + C to exit)" 		
+print "Ready."
+
+try:
+	for x in range(1000000):			
+	time.sleep(2)
+	led_green.on()					#when no motion is detected
+	led_red.off()
+
+	while True:
+		if pir.motion_detected:			#when motion is detected
+			print "Motion(s) Detected!"
+			led_green.off()
+			led_red.on()
+			break
+		else:
+			print "All Clear!"
+			break
+		time.sleep(1.5)
+
+except KeyboardInterrupt:					#when you exit
+	print "Offline"
+	GPIO.cleanup()
